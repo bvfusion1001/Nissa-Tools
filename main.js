@@ -118,7 +118,7 @@
     <td><span id="baths"></span></td>
   </tr>
   -->
-  
+
   </table>
   <table class="dreampop-helper">
   <tr>
@@ -264,8 +264,8 @@
             }
             eventGroup.minutes += data.minutes;
             if (eventGroup.minutes >= 60) {
-                eventGroup.minutes = eventGroup.minutes % 60;
                 eventGroup.hours += (eventGroup.minutes - (eventGroup.minutes % 60)) / 60;
+                eventGroup.minutes = eventGroup.minutes % 60;
             }
             eventGroup.hours += data.hours;
         });
@@ -284,92 +284,92 @@
         document.getElementById('mlsIndirectBhpn').textContent = eventTotals.mlsIndirectBhpn.total;
         document.getElementById('other').textContent = eventTotals.other.total;
         
-        var pmi = 175;
-        document.getElementById('pmi').textContent = doubleToCurrency(pmi);
-        var hInsurance = 150;
-        document.getElementById('hInsurance').textContent = doubleToCurrency(hInsurance);
+        // var pmi = 175;
+        // document.getElementById('pmi').textContent = doubleToCurrency(pmi);
+        // var hInsurance = 150;
+        // document.getElementById('hInsurance').textContent = doubleToCurrency(hInsurance);
 
-        var address = document.getElementsByClassName('formula J_formula')[0].textContent.trim()
-        document.getElementById('address').value = address;
+        // var address = document.getElementsByClassName('formula J_formula')[0].textContent.trim()
+        // document.getElementById('address').value = address;
 
-        var propertyTax = '';
-        try {
-            var priceValue = document.getElementsByClassName('d-text d-fontSize--largest d-color--brandDark')[0].textContent.trim();
-            var price = parseCurrency(priceValue);
-            propertyTax = price * 0.01;
-            document.getElementById('propertyTax').textContent = doubleToCurrency(propertyTax.toFixed(0));
-        } catch (ex) { }
+        // var propertyTax = '';
+        // try {
+        //     var priceValue = document.getElementsByClassName('d-text d-fontSize--largest d-color--brandDark')[0].textContent.trim();
+        //     var price = parseCurrency(priceValue);
+        //     propertyTax = price * 0.01;
+        //     document.getElementById('propertyTax').textContent = doubleToCurrency(propertyTax.toFixed(0));
+        // } catch (ex) { }
 
-        var assessmentValue = '';
-        var supplementalTax = '';
-        try {
-            var assessmentLabel = $('div > span').filter(function () { return ($(this).text() === 'Tax Other Annual Assessment Amount') });
-            assessmentValue = assessmentLabel[0].parentElement.nextElementSibling.children[0].textContent;
-            supplementalTax = parseCurrency(assessmentValue);
-            document.getElementById('assessmentValue').textContent = doubleToCurrency(supplementalTax.toFixed(0));
-        } catch (ex) { }
+        // var assessmentValue = '';
+        // var supplementalTax = '';
+        // try {
+        //     var assessmentLabel = $('div > span').filter(function () { return ($(this).text() === 'Tax Other Annual Assessment Amount') });
+        //     assessmentValue = assessmentLabel[0].parentElement.nextElementSibling.children[0].textContent;
+        //     supplementalTax = parseCurrency(assessmentValue);
+        //     document.getElementById('assessmentValue').textContent = doubleToCurrency(supplementalTax.toFixed(0));
+        // } catch (ex) { }
 
-        var hoa = '';
-        try {
-            var hoaLabel = $('div > span').filter(function () { return ($(this).text().indexOf('Association Fee') > -1) });
-            var hoaValue = hoaLabel[1].parentElement.nextElementSibling.children[0].textContent;
-            hoa = parseCurrency(hoaValue);
-            document.getElementById('hoa').textContent = doubleToCurrency(hoa.toFixed(0));
-        } catch (ex) { }
+        // var hoa = '';
+        // try {
+        //     var hoaLabel = $('div > span').filter(function () { return ($(this).text().indexOf('Association Fee') > -1) });
+        //     var hoaValue = hoaLabel[1].parentElement.nextElementSibling.children[0].textContent;
+        //     hoa = parseCurrency(hoaValue);
+        //     document.getElementById('hoa').textContent = doubleToCurrency(hoa.toFixed(0));
+        // } catch (ex) { }
 
-        var downPayment = price * 0.03;
-        var loanAmount = price - downPayment;
-        var interestRate = 0.03375 / 12;
-        var terms = 30 * 12;
+        // var downPayment = price * 0.03;
+        // var loanAmount = price - downPayment;
+        // var interestRate = 0.03375 / 12;
+        // var terms = 30 * 12;
 
-        var monthlyTax = (propertyTax + supplementalTax) / 12;
-        document.getElementById('monthlyTax').textContent = doubleToCurrency(monthlyTax.toFixed(0));
+        // var monthlyTax = (propertyTax + supplementalTax) / 12;
+        // document.getElementById('monthlyTax').textContent = doubleToCurrency(monthlyTax.toFixed(0));
 
-        var monthlyMinusPni = monthlyTax + pmi + hInsurance + hoa;
-        document.getElementById('monthlyMinusPni').textContent = doubleToCurrency(monthlyMinusPni.toFixed(0));
+        // var monthlyMinusPni = monthlyTax + pmi + hInsurance + hoa;
+        // document.getElementById('monthlyMinusPni').textContent = doubleToCurrency(monthlyMinusPni.toFixed(0));
 
-        var pni = loanAmount * (interestRate * Math.pow((1 + interestRate), terms) / (Math.pow((1 + interestRate), terms) - 1));
-        document.getElementById('pni').textContent = doubleToCurrency(pni);
+        // var pni = loanAmount * (interestRate * Math.pow((1 + interestRate), terms) / (Math.pow((1 + interestRate), terms) - 1));
+        // document.getElementById('pni').textContent = doubleToCurrency(pni);
 
-        var monthlyTotal = monthlyMinusPni + pni;
-        document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
+        // var monthlyTotal = monthlyMinusPni + pni;
+        // document.getElementById('monthlyTotal').value = doubleToCurrency(monthlyTotal);
 
-        try {
-            var beds = $('div > span').filter(function () { return ($(this).text().indexOf('beds') > -1) });
-            var bedsValue = parseInt(beds[1].previousElementSibling.textContent, 10);
-            var bedsResult = bedsValue < 3 ? '❌' :
-                bedsValue == 3 ? '⚠' :
-                    '✅';
-            bedsResult += ` ${bedsValue} Bedrooms`;
-            document.getElementById('beds').textContent = bedsResult;
-        } catch (ex) { }
+        // try {
+        //     var beds = $('div > span').filter(function () { return ($(this).text().indexOf('beds') > -1) });
+        //     var bedsValue = parseInt(beds[1].previousElementSibling.textContent, 10);
+        //     var bedsResult = bedsValue < 3 ? '❌' :
+        //         bedsValue == 3 ? '⚠' :
+        //             '✅';
+        //     bedsResult += ` ${bedsValue} Bedrooms`;
+        //     document.getElementById('beds').textContent = bedsResult;
+        // } catch (ex) { }
 
-        try {
-            var baths = $('div > span').filter(function () { return ($(this).text().indexOf('baths') > -1) });
-            var bathsValue = parseInt(baths[1].previousElementSibling.textContent, 10);
-            var bathsResult = bathsValue < 2 ? '❌' :
-                bathsValue == 2 ? '⚠' :
-                    '✅';
-            bathsResult += ` ${bathsValue} Bathrooms`;
-            document.getElementById('baths').textContent = bathsResult;
-        } catch (ex) { }
+        // try {
+        //     var baths = $('div > span').filter(function () { return ($(this).text().indexOf('baths') > -1) });
+        //     var bathsValue = parseInt(baths[1].previousElementSibling.textContent, 10);
+        //     var bathsResult = bathsValue < 2 ? '❌' :
+        //         bathsValue == 2 ? '⚠' :
+        //             '✅';
+        //     bathsResult += ` ${bathsValue} Bathrooms`;
+        //     document.getElementById('baths').textContent = bathsResult;
+        // } catch (ex) { }
 
-        try {
-            var garageSpaces = $('div > span').filter(function () { return ($(this).text().indexOf('Garage Spaces') > -1) });
-            var garageValue = parseInt(garageSpaces[1].parentElement.nextElementSibling.children[0].textContent, 10);
-            var garageResult = garageValue < 2 ? '❌' :
-                garageValue == 2 ? '⚠' :
-                    '✅';
-            garageResult += ` ${garageValue} Car Garage`;
-            document.getElementById('garage').textContent = garageResult;
-        } catch (ex) { }
+        // try {
+        //     var garageSpaces = $('div > span').filter(function () { return ($(this).text().indexOf('Garage Spaces') > -1) });
+        //     var garageValue = parseInt(garageSpaces[1].parentElement.nextElementSibling.children[0].textContent, 10);
+        //     var garageResult = garageValue < 2 ? '❌' :
+        //         garageValue == 2 ? '⚠' :
+        //             '✅';
+        //     garageResult += ` ${garageValue} Car Garage`;
+        //     document.getElementById('garage').textContent = garageResult;
+        // } catch (ex) { }
 
-        try {
-            var documentText = (document.documentElement.textContent || document.documentElement.innerText);
-            var hasSolar = documentText.match(/solar/gi) && !documentText.match(/no solar/gi);
-            var solarResult = hasSolar ? '✅ ടolar' : '⚠ No ടolar';
-            document.getElementById('panels').textContent = solarResult;
-        } catch (ex) { }
+        // try {
+        //     var documentText = (document.documentElement.textContent || document.documentElement.innerText);
+        //     var hasSolar = documentText.match(/solar/gi) && !documentText.match(/no solar/gi);
+        //     var solarResult = hasSolar ? '✅ ടolar' : '⚠ No ടolar';
+        //     document.getElementById('panels').textContent = solarResult;
+        // } catch (ex) { }
     }
 
     function fillData(data) {
