@@ -90,7 +90,10 @@
   <tr>
   <td colspan="2" style="font-size: 12pt;font-weight: bold;text-align: center;padding: 0;">Nissa Tool</td>
   <td></td>
-  </tr><tr>
+  </tr>
+  
+  <!--
+  <tr>
   <td colspan="2">
       <div style="position: relative;">
           <input id="address" value=""/>
@@ -114,6 +117,8 @@
     <td><span id="beds"></span></td>
     <td><span id="baths"></span></td>
   </tr>
+  -->
+  
   </table>
   <table class="dreampop-helper">
   <tr>
