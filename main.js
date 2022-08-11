@@ -82,7 +82,7 @@
         div.style.display = "none";
 
         div.style.width = "280px";
-        div.style.background = "#1d1d1d8f";
+        div.style.background = "rgb(0 0 0 / 15%)";
         div.style.borderRadius = "5px";
         div.style.border = "1px solid black";
         div.style.color = "black";
@@ -184,27 +184,49 @@
 
     const EVENT_TIME_PATTERN = /(\d+):?(\d+)?(AM|PM)?-(\d+):?(\d+)?(AM|PM)?/;
 
-    function scrapeData() {
-        console.log('tamper');
+    function isSchedule() {
+        return window.location.hash
+            .split('#')[1]
+            .startsWith('scheduling');
+    }
 
-        var events = $('.event');
-        var eventData = []
+    function getScheduleMode() {
+        return window.location.hash
+            .split('?')[1]
+            .split('&')
+            .find(p => p.startsWith('mode'))
+            .split('=')[1];
+    }
+
+    function getEventData(events, mode) {
+        let eventData = []
+
+        let eventType, timeText = '';
         events.each((index, event) => {
             try {
-                var eventType = $(event).find('.ln2').first().text();
-                var timeText = $(event).find('.ln1 .time').first().text();
-                var matches = EVENT_TIME_PATTERN.exec(timeText);
-                var eventTimes = {
+                switch (mode) {
+                    case 'week':
+                        eventType = $(event).find('.ln2').first().text();
+                        timeText = $(event).find('.ln1 .time').first().text();
+                        break;
+                    case 'month':
+                        let textContainer = $(event).find('a > div > span')[2];
+                        eventType = $(textContainer).children('b').last().text();
+                        timeText = $(textContainer).children('span').first().text();
+                        break;
+                }
+                let matches = EVENT_TIME_PATTERN.exec(timeText);
+                let eventTimes = {
                     startHour: matches[1],
                     startMinute: matches[2] ?? 0,
                     endHour: matches[4],
                     endMinute: matches[5] ?? 0,
                 };
                 
-                var hourDuration = eventTimes.endHour - eventTimes.startHour;
+                let hourDuration = eventTimes.endHour - eventTimes.startHour;
                 hourDuration = hourDuration < 0 ? hourDuration + 12 : hourDuration;
 
-                var minuteDuration = eventTimes.endMinute - eventTimes.startMinute;
+                let minuteDuration = eventTimes.endMinute - eventTimes.startMinute;
                 if (minuteDuration < 0) {
                     minuteDuration += 60;
                     hourDuration -= 1;
@@ -215,10 +237,20 @@
                     hours: hourDuration,
                     minutes: minuteDuration
                 });
-            } catch (error) {
-                console.log('Error');
-            }
+        } catch (error) {
+            console.log('Error');
+        }
         });
+
+        return eventData;
+    }
+
+    function scrapeData() {
+        var mode = getScheduleMode();
+
+        var events = $('.event');
+        var eventData = getEventData(events, mode);
+        
 
         var eventTotals = {
             directTx: { hours: 0, minutes: 0, total: 0},
@@ -233,7 +265,7 @@
         };
         eventData.forEach(data => {
             let eventGroup;
-            switch(data.type) {
+            switch(data.type.trim()) {
                 case 'Direct Tx':
                     eventGroup = eventTotals.directTx;
                     break;
@@ -386,22 +418,27 @@
         // To make these accessible after page load
         document.scrapeData = scrapeData;
         // document.copyToClipboard = copyToClipboard;
-
+        
         let evaluated = false;
+        var eventCalculator = document.getElementById('eventCalculator');
         // while (!evaluated) {
             setInterval(function () {
                 if (!evaluated || true) {
                     try {
-                        var eventCalculator = document.getElementById('eventCalculator');
+                        if (!isSchedule()) {
+                            throw new Exception();
+                        }
                         var overlayLoadingDisplay = $('.overlay-loading')[0].style.display;
                         if (overlayLoadingDisplay == 'none') {
                             eventCalculator.style.display = "block";
                             evaluated = true;
                             document.scrapeData();
                         } else {
-                            eventCalculator.style.display = "none";
+                            throw new Exception();
                         }
-                    } catch (ex) { }
+                    } catch (ex) { 
+                        eventCalculator.style.display = "none";
+                    }
                 }
             }, 1000);
         // }
